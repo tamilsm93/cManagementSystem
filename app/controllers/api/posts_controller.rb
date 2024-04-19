@@ -1,10 +1,12 @@
-module Api
-	class PostsController < ApplicationController
-
-		skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
+class Api::PostsController < ApplicationController
+	skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
 		
 		def index
-			@posts = Post.all
+			if params["category_id"].present?
+				@posts = Post.all.where(category_id: params["category_id"])
+			else
+				@posts = Post.all
+			end
 			render json: @posts
 		end
 	
@@ -50,5 +52,4 @@ module Api
 		def post_params
 			params.require(:post).permit(:title, :content, :category_id)
 		end
-	end
 end
